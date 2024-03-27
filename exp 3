@@ -1,0 +1,110 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+
+
+int main(int argc, char * argv[]){
+
+    int i,j,k;
+
+    int matrix[2][2],adjoint[2][2],plaintxt[2][0],encrypted[2][0],decrypted[2][0];
+
+    long determinant;
+
+    float inverse_matrix[2][2];
+
+    char msg[10];
+
+    printf("\nEnter your elements for a 2X2 matrix key.Each integer should be separated by a space.\n");
+
+    for(i = 0; i < 2; i++)
+    {
+        for(j = 0; j < 2; j++)
+        {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    printf("\nThe 2X2 Key Matrix:\n");
+
+    for(i = 0; i < 2; i++)
+    {
+        for(j = 0; j < 2; j++)
+        {
+            printf("%d\t", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+
+    determinant = matrix[0][0]*matrix[1][1] - matrix[1][0]*matrix[0][1];
+
+    if(determinant == 0)
+    {
+        printf("\nInvalid key. The matrix does not have an inverse.\n");
+        printf("\n");
+        exit(EXIT_FAILURE);
+    }
+
+
+    adjoint[0][0] = matrix[1][1];
+    adjoint[1][1] = matrix[0][0];
+    adjoint[0][1] = -matrix[0][1];
+    adjoint[1][0] = -matrix[1][0];
+
+    printf("\nInverse of the 2X2 Key Matrix:\n");
+
+    for(i = 0; i < 2; i++)
+    {
+        for(j = 0; j < 2; j++)
+        {
+            inverse_matrix[i][j] = (adjoint[i][j])/(float)determinant;
+            printf("%lf\t", inverse_matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+
+    printf("\n Enter 2 plaintext characters to cipher.\n");
+    scanf("%s", msg);
+
+    for(i = 0; i < 2; i++)
+    {
+        plaintxt[i][0] = msg[i] - 97;
+        printf("%d", plaintxt[i][0]);
+    }
+
+    if(argc >= 2)
+    {
+        if(strcmp(argv[1], "-e") == 0)
+        {
+            for(i = 0; i < 2; i++){
+                k = 0;
+                for(j = 0; j < 2; j++){
+                    k = k + matrix[i][j] * plaintxt[i][0];
+                }
+                encrypted[i][0] = k % 26;
+            }
+            printf("\nEncrypted cipher text: ");
+            for(i = 0; i < 2; i++)
+                printf("%c", encrypted[i][0] + 97);
+        }
+        else if(strcmp(argv[1], "-d") == 0)
+        {
+            for(i = 0; i < 2; i++){
+                k = 0;
+                for(j = 0; j < 2; j++){
+                    k = k + inverse_matrix[i][j] * encrypted[i][0];
+                }
+                plaintxt[i][0] = k % 26;
+            }
+            printf("\nDecrypted cipher text: ");
+            for(i = 0; i < 2; i++)
+                printf("%c", plaintxt[i][0] + 97);
+        }
+    }
+    
+    return 0;}
+
+    
