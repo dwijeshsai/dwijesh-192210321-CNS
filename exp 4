@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+void vigenereEncrypt(char *message, const char *key) {
+    int keyLen = strlen(key);
+    int messageLen = strlen(message);
+    int i, j;
+    for (i = 0, j = 0; i < messageLen; ++i, ++j) {
+        if (j == keyLen)
+            j = 0;
+        if (isalpha(message[i])) {
+            if (isupper(message[i])) {
+                message[i] = ((message[i] - 'A') + (toupper(key[j]) - 'A')) % 26 + 'A';
+            } else {
+                message[i] = ((message[i] - 'a') + (toupper(key[j]) - 'A')) % 26 + 'a';
+            }
+        }
+    }
+}
+void vigenereDecrypt(char *message, const char *key) {
+    int keyLen = strlen(key);
+    int messageLen = strlen(message);
+    int i, j;
+    for (i = 0, j = 0; i < messageLen; ++i, ++j) {
+        if (j == keyLen)
+            j = 0;
+        if (isalpha(message[i])) {
+            if (isupper(message[i])) {
+                message[i] = ((message[i] - 'A') - (toupper(key[j]) - 'A') + 26) % 26 + 'A';
+            } else {
+                message[i] = ((message[i] - 'a') - (toupper(key[j]) - 'A') + 26) % 26 + 'a';
+            }
+        }
+    }
+}
+int main() {
+    char message[1000];
+    char key[100];
+    printf("Enter the message: ");
+    fgets(message, sizeof(message), stdin);
+    printf("Enter the key: ");
+    scanf("%s", key);
+    message[strcspn(message, "\n")] = '\0';
+    vigenereEncrypt(message, key);
+    printf("Encrypted message: %s\n", message);
+    vigenereDecrypt(message, key);
+    printf("Decrypted message: %s\n", message);
+    return 0;
+}
